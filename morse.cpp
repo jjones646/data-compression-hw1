@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     std::transform(fdata.begin(), fdata.end(), fdata.begin(), ::tolower);
 
     // remove special characters
-    const string specials = "\r\n\t(){}[]\\/,.;`!@#$%%^&*-_'+=~\"";
+    const string specials = "\r\n\t(){}[]<>?\\/,.;:`!@#$%%^&*-_'+=~\"";
     for (auto c : specials)
         fdata.erase(std::remove(fdata.begin(), fdata.end(), c), fdata.end());
 
