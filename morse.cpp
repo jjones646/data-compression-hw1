@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     std::transform(fdata.begin(), fdata.end(), fdata.begin(), ::tolower);
 
     // remove special characters
-    const string specials = "\r\n\t(){}[]<>?\\/,.;:`~!@#$%%^&*-_'+=\"";
+    const string specials = "\r\n\t(){}[]<>?\\/,.;:`~!@#$%%^&*-_'\'+=\"\a\b\f\v\x91\x92\x93\x94\x95\x96";
     for (auto c : specials)
         fdata.erase(std::remove(fdata.begin(), fdata.end(), c), fdata.end());
 
@@ -169,17 +169,6 @@ int main(int argc, char* argv[]) {
          << "\tIntra  => " << fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%" << endl
          << "\tInter  => " << fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%" << endl
          << "\tWords  => " << fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%" << endl;
-
-    // now we count the frequency of characters in pairs
-    // map<string, size_t> permap;
-    // for ( string::iterator it = fdata.begin(); it != fdata.end() - 1; ++it) {
-    //     // increment the count for this pair
-    //     permap[string(it, it + 2)]++;
-    // }
-
-    // print out the results from the pairwise occurrences
-    // for (auto e : permap)
-    // cout << e.first << " => " << e.second << "\n";
 
     // we're all done here
     exit(EXIT_SUCCESS);
