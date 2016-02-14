@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++14 -lstdc++
-DEPS = morse.hpp
+DEPS = morse.hpp alphabet.hpp
 OBJS = morse.o
 
 %.o: %.c $(DEPS)
