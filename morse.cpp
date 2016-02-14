@@ -1,8 +1,14 @@
-
+/**
+ *  Jonathan Jones
+ *  
+ *  A simple program to parse in a file and convert to morse code dots & dashes.
+ *  
+ *  morse.cpp
+ */
 
 #include <cstdlib>
+#include <iostream>
 #include <fstream>
-// #include <cstdio>
 
 using namespace std;
 
