@@ -1,13 +1,14 @@
-CC=g++
-CFLAGS=-std=c++14 -lstdc++
-DEPS = morse.hpp alphabet.hpp
-OBJS = morse.o
+CXX = g++
+CXXFLAGS = -std=c++14 -lstdc++
+BIN = morse
+SRC = $(wildcard *.cpp)
+OBJS = $(SRC:%.cpp=%.o)
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-morse: $(OBJS)
-	gcc -o $@ $^ $(CFLAGS)
+$(BIN): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:
-	rm -f morse $(OBJS)
+	rm -f $(BIN) $(OBJS)

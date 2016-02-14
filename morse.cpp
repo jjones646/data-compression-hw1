@@ -14,6 +14,7 @@
 #include "alphabet1.hpp"
 
 using namespace std;
+using namespace mcode;
 
 
 int main(int argc, char* argv[]) {
@@ -57,10 +58,17 @@ int main(int argc, char* argv[]) {
     // we no longer need to hold the file open, so let's close it
     infile.close();
 
-    // print out what we read in
-    cout << fdata;
+    // dot_span
+    // dash_span
+    // intra_letter_gap
+    // inter_letter_gap
+    // inter_word_gap
 
-    cout << endl << endl << a.first << endl;
+    // iterate over the contents of the file
+    for (auto const &i : fdata)
+        cout << i;
+
+    // cout << endl << endl << a.first << " => " << a.second << endl;
 
     // print out a final blank line to keep things neat
     cout << endl;
