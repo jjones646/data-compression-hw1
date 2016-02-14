@@ -4,3 +4,6 @@
  */
 
 #include "alphabet1.hpp"
+// #include "alphabet_rand1.hpp"
+// #include "alphabet_rand2.hpp"
+// #include "alphabet_4_symbol.hpp"

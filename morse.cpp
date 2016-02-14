@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -81,15 +82,26 @@ int main(int argc, char* argv[]) {
     size_t total_units = 0;
     // where we track the count of total parsed characters
     size_t total_letters = 0;
+    size_t total_dots = 0;
+    size_t total_dashes = 0;
+    size_t total_intra_gaps = 0;
+    size_t total_inter_gaps = 0;
+    size_t total_words = 0;
 
     // iterate over the contents of the file
     for (auto c : fdata) {
         // check to see if the character is a space - if it
         // is, this means that we are between words
-        if ( c == ' ' ) {
+        if ( (c == ' ') && m.m[c].compare("") == 0 ) {
             // add on the inter_word length and continue to the
             // next character
             total_units += m.inter_word_units;
+            total_inter_gaps += m.inter_word_units;
+
+            // increment our number of total letters processed
+            total_words++;
+            total_letters++;
+
             continue;
 
         } else {
@@ -99,16 +111,20 @@ int main(int argc, char* argv[]) {
 
             // add on the number of dot units
             total_units += numDots(mc) * m.dot_units;
+            total_dots += numDots(mc) * m.dot_units;
 
             // add on the number of dash units
             total_units += numDashes(mc) * m.dash_units;
+            total_dashes += numDashes(mc) * m.dash_units;
 
             // add on the number of units for intra-dot/dash delimiting
             // this will be [number of dots & dashes] - 1
-            total_units += numDots(mc) + numDashes(mc) - 1;
+            total_units += (numDots(mc) + numDashes(mc) - 1) * m.intra_letter_units;
+            total_intra_gaps += (numDots(mc) + numDashes(mc) - 1) * m.intra_letter_units;
 
             // add on the number of units to delimit a letter
             total_units += m.inter_letter_units;
+            total_inter_gaps += m.inter_letter_units;
 
             // increment our number of total letters processed
             total_letters++;
@@ -122,8 +138,48 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    size_t total_all = total_dots + total_dashes + total_inter_gaps + total_intra_gaps + total_words;
+
+    // print out the final results for part a
     cout << "Total duration:\t" << total_units << endl
          << "Avg. duration:\t" << static_cast<double>(total_units) / total_letters << endl;
+
+    // count the frequency of each character
+    map<char, size_t> charfreq;
+    for ( string::iterator it = fdata.begin(); it != fdata.end() - 1; ++it) {
+        // increment the count for this pair
+        charfreq[*it]++;
+    }
+
+    // print out the results for the frequency of each character
+    cout << "Distribution:" << endl;
+    for (auto e : charfreq)
+        cout << "\t" << e.first << " => " << fixed << setprecision(3) << static_cast<double>(e.second) / total_letters * 100 << "%" << endl;
+
+    LOG_MSG << "Total Dots:\t" << total_dots << endl
+            << "Total Dashes:\t" << total_dashes << endl
+            << "Total Intra:\t" << total_intra_gaps << endl
+            << "Total Inter:\t" << total_inter_gaps << endl
+            << "Total Words:\t" << total_words << endl
+            << "Total All:\t" << total_all << endl;
+
+    cout << "Mapped Distribution:" << endl
+         << "\tDots   => " << fixed << setprecision(3) << static_cast<double>(total_dots) / total_all * 100 << "%" << endl
+         << "\tDashes => " << fixed << setprecision(3) << static_cast<double>(total_dashes) / total_all * 100 << "%" << endl
+         << "\tIntra  => " << fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%" << endl
+         << "\tInter  => " << fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%" << endl
+         << "\tWords  => " << fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%" << endl;
+
+    // now we count the frequency of characters in pairs
+    // map<string, size_t> permap;
+    // for ( string::iterator it = fdata.begin(); it != fdata.end() - 1; ++it) {
+    //     // increment the count for this pair
+    //     permap[string(it, it + 2)]++;
+    // }
+
+    // print out the results from the pairwise occurrences
+    // for (auto e : permap)
+    // cout << e.first << " => " << e.second << "\n";
 
     // we're all done here
     exit(EXIT_SUCCESS);
