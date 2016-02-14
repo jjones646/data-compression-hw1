@@ -14,18 +14,17 @@
 #include "morse.hpp"
 #include "alphabet.hpp"
 
-namespace {
-// set to false to show debugging information
-const bool debug_disabled = true;
-}
-
 #define LOG_MSG \
       if (debug_disabled == true) {} \
       else clog
 
 using namespace std;
 
-// main program entry
+namespace {
+// set to false to show debugging information
+const bool debug_disabled = true;
+}
+
 int main(int argc, char* argv[]) {
     // make sure we are given a file to parse
     if ( argc != 2 ) {
