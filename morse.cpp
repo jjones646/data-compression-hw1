@@ -12,7 +12,16 @@
 #include <algorithm>
 
 #include "morse.hpp"
-#include "alphabet1.hpp"
+#include "alphabet.hpp"
+
+namespace {
+// set to false to show debugging information
+const bool debug_disabled = true;
+}
+
+#define LOG_MSG \
+      if (debug_disabled == true) {} \
+      else clog
 
 using namespace std;
 
@@ -71,6 +80,8 @@ int main(int argc, char* argv[]) {
 
     // where we store the total duration units
     size_t total_units = 0;
+    // where we track the count of total parsed characters
+    size_t total_letters = 0;
 
     // iterate over the contents of the file
     for (auto c : fdata) {
@@ -100,20 +111,20 @@ int main(int argc, char* argv[]) {
             // add on the number of units to delimit a letter
             total_units += m.inter_letter_units;
 
+            // increment our number of total letters processed
+            total_letters++;
+
             // Debugging
-            clog << "===== " << c << " =====" << endl;
-            clog << "Morse Repr:\t" << mc << endl;
-            clog << "Num Dots:\t" << numDots(mc) << endl;
-            clog << "Num Dashes:\t" << numDashes(mc) << endl;
-            clog << "Total Units:\t" << total_units << endl;
-            clog << endl;
+            LOG_MSG << "Letter:\t" << c << endl
+                    << "\tMorse Repr:\t" << mc << endl
+                    << "\tNum Dots:\t" << numDots(mc) << endl
+                    << "\tNum Dashes:\t" << numDashes(mc) << endl
+                    << "\tTotal Units:\t" << total_units << endl;
         }
     }
 
-    // cout << endl << endl << a.first << " => " << a.second << endl;
-
-    // print out a final blank line to keep things neat
-    cout << endl;
+    cout << "Total duration:\t" << total_units << endl
+         << "Avg. duration:\t" << static_cast<double>(total_units) / total_letters << endl;
 
     // we're all done here
     exit(EXIT_SUCCESS);

@@ -55,9 +55,6 @@ public:
         m['9'] = "----.";
         m['0'] = "-----";
         m[' '] = "";
-        m['\t'] = "";
-        m['\n'] = "";
-        m['\r'] = "";
     };
 
     // Holds the morse code mappings from
