@@ -21,3 +21,13 @@ bool fileExists(const std::string& filename)
 
     return false;
 }
+
+// Returns the number of dots in a string
+size_t numDots(const std::string& s) {
+    return std::count(s.begin(), s.end(), '.');
+}
+
+// Returns the number of dashes in a string
+size_t numDashes(const std::string& s) {
+    return std::count(s.begin(), s.end(), '-');
+}

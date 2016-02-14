@@ -9,14 +9,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 #include "morse.hpp"
 #include "alphabet1.hpp"
 
 using namespace std;
-using namespace mcode;
 
-
+// main program entry
 int main(int argc, char* argv[]) {
     // make sure we are given a file to parse
     if ( argc != 2 ) {
@@ -58,15 +58,57 @@ int main(int argc, char* argv[]) {
     // we no longer need to hold the file open, so let's close it
     infile.close();
 
-    // dot_span
-    // dash_span
-    // intra_letter_gap
-    // inter_letter_gap
-    // inter_word_gap
+    // convert everything to lowercase
+    std::transform(fdata.begin(), fdata.end(), fdata.begin(), ::tolower);
+
+    // remove special characters
+    const string specials = "\r\n\t()\\/,.;'\"";
+    for (auto c : specials)
+        fdata.erase(std::remove(fdata.begin(), fdata.end(), c), fdata.end());
+
+    // grab an object for the morse code mappings
+    codemap m;
+
+    // where we store the total duration units
+    size_t total_units = 0;
 
     // iterate over the contents of the file
-    for (auto const &i : fdata)
-        cout << i;
+    for (auto c : fdata) {
+        // check to see if the character is a space - if it
+        // is, this means that we are between words
+        if ( c == ' ' ) {
+            // add on the inter_word length and continue to the
+            // next character
+            total_units += m.inter_word_units;
+            continue;
+
+        } else {
+            // if it's not a space, grab the string of its morse code
+            // representation
+            string mc(m.m[c]);
+
+            // add on the number of dot units
+            total_units += numDots(mc) * m.dot_units;
+
+            // add on the number of dash units
+            total_units += numDashes(mc) * m.dash_units;
+
+            // add on the number of units for intra-dot/dash delimiting
+            // this will be [number of dots & dashes] - 1
+            total_units += numDots(mc) + numDashes(mc) - 1;
+
+            // add on the number of units to delimit a letter
+            total_units += m.inter_letter_units;
+
+            // Debugging
+            clog << "===== " << c << " =====" << endl;
+            clog << "Morse Repr:\t" << mc << endl;
+            clog << "Num Dots:\t" << numDots(mc) << endl;
+            clog << "Num Dashes:\t" << numDashes(mc) << endl;
+            clog << "Total Units:\t" << total_units << endl;
+            clog << endl;
+        }
+    }
 
     // cout << endl << endl << a.first << " => " << a.second << endl;
 
