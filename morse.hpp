@@ -1,10 +1,8 @@
 
 #include <string>
-
 #include <sys/stat.h>
 
 
-// Function: fileExists
 /**
     Check if a file exists
 @param[in] filename - the name of the file to check
