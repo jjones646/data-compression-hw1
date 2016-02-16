@@ -141,7 +141,8 @@ int partOne(string& fdata) {
             << "Total Words:\t" << total_words << endl
             << "Total All:\t" << total_all << endl;
 
-    cout << "Word Count:\t" << worddata.size() << endl;
+    cout << "Word Count:\t\t" << worddata.size() << endl
+         << "Entropy Alphabet:\t" << entropy_chars << endl;
 
     cout << "Mapped Distribution:" << endl
          << "\tDots   => " << fixed << setprecision(3) << static_cast<double>(total_dots) / total_all * 100 << "%" << endl
@@ -149,6 +150,28 @@ int partOne(string& fdata) {
          << "\tIntra  => " << fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%" << endl
          << "\tInter  => " << fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%" << endl
          << "\tWords  => " << fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%" << endl;
+
+    // create a vector holding everything
+    vector<double> totals;
+    totals.push_back(total_dots);
+    totals.push_back(total_dashes);
+    totals.push_back(total_intra_gaps);
+    totals.push_back(total_inter_gaps);
+    totals.push_back(total_words);
+
+    double totals_sum = 0;
+    for (auto const& t : totals)
+        totals_sum += t;
+
+    // where we'll store the entropy of the morse mapped alphabet
+    double entropy_morse = 0;
+    for (auto const& t : totals) {
+        const double prob = static_cast<double>(t) / totals_sum;
+        entropy_morse += prob * log2(prob);
+    }
+    entropy_morse *= -1;
+    
+    cout << "Entroy Morse Alphabet:\t" << entropy_morse << endl;
 
     return EXIT_SUCCESS;
 }
