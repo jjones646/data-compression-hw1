@@ -6,11 +6,15 @@
  */
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <algorithm>
+#include <iterator>
 
 #include "morse.hpp"
 #include "alphabet.hpp"
@@ -26,54 +30,7 @@ namespace {
 const bool debug_disabled = true;
 }
 
-int main(int argc, char* argv[]) {
-    // make sure we are given a file to parse
-    if ( argc != 2 ) {
-        cout << "usage: " << argv[0] << " <file>" << endl;
-        return EXIT_FAILURE;
-    }
-
-    // check if the given file exists
-    string fn(argv[1]);
-
-    if ( fileExists(fn) == false ) {
-        cout << fn << " does not exist" << endl;
-        return EXIT_FAILURE;
-    }
-
-    // make a variable that will hold the entire contents
-    // of our incoming file
-    string fdata;
-
-    // if we make it here, the file exists
-    // let's open the file now
-    ifstream infile;
-    infile.open(fn.c_str());
-
-    // if everything goes well, we can now parse it line by line
-    if ( infile.is_open() ) {
-        // let's read in the file now
-        string line;
-        while ( !infile.eof() ) {
-            getline(infile, line);
-            fdata += line;
-        }
-    } else {
-        // otherwise, exit with a failure
-        cout << "error opening " << fn << endl;
-        return EXIT_FAILURE;
-    }
-
-    // we no longer need to hold the file open, so let's close it
-    infile.close();
-
-    // convert everything to lowercase
-    std::transform(fdata.begin(), fdata.end(), fdata.begin(), ::tolower);
-
-    // remove special characters
-    const string specials = "\r\n\t(){}[]<>?\\/,.;:`~!@#$%%^&*-_'\'+=\"\a\b\f\v\x91\x92\x93\x94\x95\x96";
-    for (auto c : specials)
-        fdata.erase(std::remove(fdata.begin(), fdata.end(), c), fdata.end());
+int partOne(string& fdata) {
 
     // grab an object for the morse code mappings
     codemap m;
@@ -147,7 +104,7 @@ int main(int argc, char* argv[]) {
     // count the frequency of each character
     map<char, size_t> charfreq;
     for ( string::iterator it = fdata.begin(); it != fdata.end() - 1; ++it) {
-        // increment the count for this pair
+        // increment the count for this character
         charfreq[*it]++;
     }
 
@@ -169,6 +126,127 @@ int main(int argc, char* argv[]) {
          << "\tIntra  => " << fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%" << endl
          << "\tInter  => " << fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%" << endl
          << "\tWords  => " << fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%" << endl;
+
+    return EXIT_SUCCESS;
+}
+
+int partTwo(string& fdata) {
+
+    // create a vector holding all of the words
+    stringstream ss(fdata);
+    istream_iterator<string> _begin(ss);
+    istream_iterator<string> _end;
+    vector<string> worddata(_begin, _end);
+
+    // count the frequency of each character
+    map<char, size_t> charfreq;
+    for ( string::iterator it = fdata.begin(); it != fdata.end() - 1; ++it) {
+        // increment the count for this character
+        charfreq[*it]++;
+    }
+
+    // count the frequency of each character
+    map<string, size_t> wordfreq;
+    for ( vector<string>::iterator it = worddata.begin(); it != worddata.end() - 1; ++it) {
+        // increment the count for this character
+        wordfreq[*it]++;
+    }
+
+    // print out the results for the frequency of each character
+    double entropy_chars = 0;
+    cout << "Alphabet Distribution:" << endl;
+    for (auto e : charfreq) {
+        cout << "\t" << e.first << "\t=>\t"
+             << e.second << "\t("
+             << fixed << setprecision(3) << static_cast<double>(e.second) / fdata.size() * 100 << "%)" << endl;
+
+        const double prob = static_cast<double>(e.second) / fdata.size();
+        entropy_chars += prob * log2(prob);
+    }
+    entropy_chars *= -1;
+
+    double entropy_words = 0;
+    cout << "Dictionary Distribution:" << endl;
+    for (auto e : wordfreq) {
+        cout << "\t" << e.first << "\t=>\t"
+             << e.second << "\t("
+             << fixed << setprecision(3) << static_cast<double>(e.second) / worddata.size() * 100 << "%)" << endl;
+
+        const double prob = static_cast<double>(e.second) / worddata.size();
+        entropy_words += prob * log2(prob);
+    }
+    entropy_words *= -1;
+
+    cout << "Entropy Alphabet:\t" << entropy_chars << endl
+         << "Entropy Dictionary:\t" << entropy_words << endl;
+
+    return EXIT_SUCCESS;
+}
+
+int main(int argc, char* argv[]) {
+    // make sure we are given a file to parse
+    if ( argc < 2 ) {
+        cout << "usage: " << argv[0] << " <file>" << endl;
+        return EXIT_FAILURE;
+    }
+
+    // check if the given file exists
+    string fn(argv[1]);
+
+    if ( fileExists(fn) == false ) {
+        cout << fn << " does not exist" << endl;
+        return EXIT_FAILURE;
+    }
+
+    // make a variable that will hold the entire contents
+    // of our incoming file
+    string fdata;
+
+    // if we make it here, the file exists
+    // let's open the file now
+    ifstream infile;
+    infile.open(fn.c_str());
+
+    // if everything goes well, we can now parse it line by line
+    if ( infile.is_open() ) {
+        // let's read in the file now
+        string line;
+        while ( !infile.eof() ) {
+            getline(infile, line);
+            fdata += line;
+        }
+    } else {
+        // otherwise, exit with a failure
+        cout << "error opening " << fn << endl;
+        return EXIT_FAILURE;
+    }
+
+    // we no longer need to hold the file open, so let's close it
+    infile.close();
+
+    // convert everything to lowercase
+    std::transform(fdata.begin(), fdata.end(), fdata.begin(), ::tolower);
+
+    // remove special characters
+    const string specials = "\r\n\t(){}[]<>?\\/,.;:`~!@#$%%^&*-_'\'+=\"\a\b\f\v\x91\x92\x93\x94\x95\x96";
+    for (auto c : specials)
+        fdata.erase(std::remove(fdata.begin(), fdata.end(), c), fdata.end());
+
+    if ( argc >= 2 ) {
+        if ( argc == 2 ) {
+            return partOne(fdata);
+        }
+        else if ( string(argv[2]).compare(string("1")) == 0 ) {
+            return partOne(fdata);
+        }
+        else if ( string(argv[2]).compare(string("2")) == 0 ) {
+            return partTwo(fdata);
+        }
+        else {
+            cout << "usage: " << argv[0] << " <file> [part]" << endl;
+            return EXIT_FAILURE;
+        }
+    }
 
     // we're all done here
     exit(EXIT_SUCCESS);
