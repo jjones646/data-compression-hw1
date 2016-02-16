@@ -108,10 +108,31 @@ int partOne(string& fdata) {
         charfreq[*it]++;
     }
 
+    // create a vector holding all of the words
+    stringstream ss(fdata);
+    istream_iterator<string> _begin(ss);
+    istream_iterator<string> _end;
+    vector<string> worddata(_begin, _end);
+
+    // count the frequency of each word
+    map<string, size_t> wordfreq;
+    for ( vector<string>::iterator it = worddata.begin(); it != worddata.end() - 1; ++it) {
+        // increment the count for this character
+        wordfreq[*it]++;
+    }
+
     // print out the results for the frequency of each character
-    cout << "Distribution:" << endl;
-    for (auto e : charfreq)
-        cout << "\t" << e.first << " => " << fixed << setprecision(3) << static_cast<double>(e.second) / total_letters * 100 << "%" << endl;
+    double entropy_chars = 0;
+    cout << "Alphabet Distribution:" << endl;
+    for (auto e : charfreq) {
+        cout << "\t" << e.first << "\t=>\t"
+             << e.second << "\t("
+             << fixed << setprecision(3) << static_cast<double>(e.second) / fdata.size() * 100 << "%)" << endl;
+
+        const double prob = static_cast<double>(e.second) / fdata.size();
+        entropy_chars += prob * log2(prob);
+    }
+    entropy_chars *= -1;
 
     LOG_MSG << "Total Dots:\t" << total_dots << endl
             << "Total Dashes:\t" << total_dashes << endl
@@ -119,6 +140,8 @@ int partOne(string& fdata) {
             << "Total Inter:\t" << total_inter_gaps << endl
             << "Total Words:\t" << total_words << endl
             << "Total All:\t" << total_all << endl;
+
+    cout << "Word Count:\t" << worddata.size() << endl;
 
     cout << "Mapped Distribution:" << endl
          << "\tDots   => " << fixed << setprecision(3) << static_cast<double>(total_dots) / total_all * 100 << "%" << endl
@@ -145,7 +168,7 @@ int partTwo(string& fdata) {
         charfreq[*it]++;
     }
 
-    // count the frequency of each character
+    // count the frequency of each word
     map<string, size_t> wordfreq;
     for ( vector<string>::iterator it = worddata.begin(); it != worddata.end() - 1; ++it) {
         // increment the count for this character
