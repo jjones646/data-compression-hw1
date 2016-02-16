@@ -145,11 +145,11 @@ int partOne(string& fdata) {
          << "Entropy Alphabet:\t" << entropy_chars << endl;
 
     cout << "Mapped Distribution:" << endl
-         << "\tDots   => " << fixed << setprecision(3) << static_cast<double>(total_dots) / total_all * 100 << "%" << endl
-         << "\tDashes => " << fixed << setprecision(3) << static_cast<double>(total_dashes) / total_all * 100 << "%" << endl
-         << "\tIntra  => " << fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%" << endl
-         << "\tInter  => " << fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%" << endl
-         << "\tWords  => " << fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%" << endl;
+         << "\tDots   =>\t" << total_dots << "\t("<< fixed << setprecision(3) << static_cast<double>(total_dots) / total_all * 100 << "%)" << endl
+         << "\tDashes =>\t" << total_dashes << "\t("<< fixed << setprecision(3) << static_cast<double>(total_dashes) / total_all * 100 << "%)" << endl
+         << "\tIntra  =>\t" << total_intra_gaps << "\t("<< fixed << setprecision(3) << static_cast<double>(total_intra_gaps) / total_all * 100 << "%)" << endl
+         << "\tInter  =>\t" << total_inter_gaps << "\t("<< fixed << setprecision(3) << static_cast<double>(total_inter_gaps) / total_all * 100 << "%)" << endl
+         << "\tWords  =>\t" << total_words << "\t("<< fixed << setprecision(3) << static_cast<double>(total_words) / total_all * 100 << "%)" << endl;
 
     // create a vector holding everything
     vector<double> totals;
@@ -170,7 +170,7 @@ int partOne(string& fdata) {
         entropy_morse += prob * log2(prob);
     }
     entropy_morse *= -1;
-    
+
     cout << "Entroy Morse Alphabet:\t" << entropy_morse << endl;
 
     return EXIT_SUCCESS;
